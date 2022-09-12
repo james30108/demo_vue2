@@ -17,16 +17,13 @@ export default defineStore('member', () => {
     }
     function save () {
         data.push ({ id : Math.random() ,name : form.name, image : form.image })
-        form.id   = null
-        form.name = null
-        form.image= null
+        reset ()
         console.log (data)
     }
     function update () {
         const index = data.findIndex(element => element.id === form.id)
         data[index].name = form.name
-        form.id   = null
-        form.name = null
+        reset ()
         console.log ("Update")
     }
     function get_one (id) {
@@ -39,6 +36,7 @@ export default defineStore('member', () => {
         form.id   = null
         form.name = null
         form.image= null
+        document.getElementById("member_image").value = "";
         console.log ("reset")
     }
     function delete_one (id) {

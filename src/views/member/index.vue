@@ -3,7 +3,6 @@
     import member from '@/stores/member'
     import Member_count from '../../components/member_count.vue'
     const member_data = member ()
-    
     provide('message', member_data.data)
 </script>
 
@@ -45,6 +44,7 @@
                                     id="member_image"
                                     placeholder="Member Image"
                                     name="member_image"
+                                    ref="imgInput"
                                     @change="member_data.insert_image"
                                     required
                                 />
@@ -67,17 +67,27 @@
                     <Member_count/>
                 </div>
                 <div class="table-responsive text-nowrap">
-                    <table class="table mb-3 text-center">
+                    <table class="table mb-3">
                     <thead>
                         <tr>
                             <th>#</th>
+                            <th>รูป</th>
                             <th>ชื่อ</th>
                             <th>จัดการ</th>
                         </tr>
                     </thead>
-                    <tbody class="table-border-bottom-0 ">
+                    <tbody class="table-border-bottom-0">
                         <tr v-for="(item, index) in member_data.data" v-if="member_data.data.length > 0">
                             <td>{{ index + 1 }}</td>
+                            <td >
+                                <img 
+                                    v-if="item.image != '' "
+                                    :src="item.image" 
+                                    class="d-block rounded"
+                                    height="100"
+                                    width="100"
+                                > 
+                            </td>
                             <td><button class="bg-transparent border-0 text-primary" @click="member_data.get_one( item.id )">{{ item.name }}</button></td>
                             <td>
                                 <button class="me-1 bg-transparent border-0" @click="member_data.delete_one( item.id )"><i class="bx bx-trash me-1 font-22 text-primary"></i></button> 
