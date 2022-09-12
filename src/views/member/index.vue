@@ -24,16 +24,28 @@
                             v-model="member_data.form.id"
                         >
                         <div class="row">
-                            <div class="mb-3">
-                                <label for="product_attribute_name" class="form-label">Member</label>
+                            <div class="col-12 mb-3">
+                                <label for="member_name" class="form-label">Member</label>
                                 <input
                                     class="form-control"
                                     type="text"
-                                    id="product_attribute_name"
+                                    id="member_name"
                                     placeholder="Member"
-                                    name="product_attribute_name"
+                                    name="member_name"
                                     v-model="member_data.form.name"
                                     autofocus
+                                    required
+                                />
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="member_image" class="form-label">Image</label>
+                                <input
+                                    class="form-control"
+                                    type="file"
+                                    id="member_image"
+                                    placeholder="Member Image"
+                                    name="member_image"
+                                    @change="member_data.insert_image"
                                     required
                                 />
                             </div>

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 export default defineStore('member', () => {
 
-    const form = reactive({ id : null, name : null })
+    const form = reactive({ id : null, name : null, image : null })
     const data = reactive([])
 
     // ตัวอย่าง computed
@@ -16,9 +16,10 @@ export default defineStore('member', () => {
         form.id != null ? update () : save ()
     }
     function save () {
-        data.push ({ id : Math.random() ,name : form.name })
+        data.push ({ id : Math.random() ,name : form.name, image : form.image })
         form.id   = null
         form.name = null
+        form.image= null
         console.log (data)
     }
     function update () {
@@ -37,6 +38,7 @@ export default defineStore('member', () => {
     function reset () {
         form.id   = null
         form.name = null
+        form.image= null
         console.log ("reset")
     }
     function delete_one (id) {
@@ -44,6 +46,11 @@ export default defineStore('member', () => {
         data.splice(index, 1)
         console.log (index)
     }
+    function insert_image (image) {
+        const file = image.target.files[0]
+        form.image = URL.createObjectURL(file)
+        console.log (file)
+    }
 
-    return { data, form, computed_message, form_submit, reset, delete_one, get_one, update }
+    return { data, form, computed_message, form_submit, reset, delete_one, get_one, update, insert_image }
 })
