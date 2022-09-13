@@ -46,7 +46,7 @@
                                     name="member_image"
                                     ref="imgInput"
                                     @change="member_data.insert_image"
-                                    required
+                                    
                                 />
                             </div>
                         </div>

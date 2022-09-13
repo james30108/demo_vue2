@@ -1,9 +1,12 @@
 import { ref, computed, reactive } from 'vue'
 import { defineStore } from 'pinia'
+import * as firestore from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage"
+import * as server from "../server"
 
 export default defineStore('member', () => {
 
-    const form = reactive({ id : null, name : null, image : null })
+    const form = reactive({ name : null, image : null })
     const data = reactive([])
 
     // ตัวอย่าง computed
@@ -15,10 +18,17 @@ export default defineStore('member', () => {
     function form_submit () {
         form.id != null ? update () : save ()
     }
-    function save () {
-        data.push ({ id : Math.random() ,name : form.name, image : form.image })
-        reset ()
-        console.log (data)
+    async function save () {
+        try {
+            //const new_name = new File([form.image], 'new_name.jpg', {type: new_name.type})
+            data.push ({ id : Math.random() ,name : form.name, image : form.image })
+            const docRef = await firestore.addDoc(firestore.collection(server.db, "users"), form);
+            console.log("Document written with ID: ", docRef.id);
+            reset ()
+        } 
+        catch (e) {
+            console.error("Error adding document: ", e);
+        }
     }
     function update () {
         const index = data.findIndex(element => element.id === form.id)
