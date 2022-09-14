@@ -64,7 +64,7 @@
                 <h5 class="card-header">รายการ</h5>
                 <div class="card-body">
                     ข้อมูลในระบบ : {{ member_data.computed_message }}
-                    <Member_count/>
+                    <!--<Member_count/>-->
                 </div>
                 <div class="table-responsive text-nowrap">
                     <table class="table mb-3">

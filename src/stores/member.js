@@ -1,4 +1,4 @@
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import { defineStore } from 'pinia'
 import * as firestore from "firebase/firestore"
 import * as storage from "firebase/storage"
@@ -16,13 +16,23 @@ export default defineStore('member', () => {
 
     // ตัวอย่าง method
     async function get_all () {
+
+        data.length = 0
         const querySnapshot = await firestore.getDocs(firestore.collection(server.db, "users"))
         querySnapshot.forEach((doc) => {
-            console.log(`${doc.id} => ${doc.data()}`);
+                
+            // Download Image
+            const storageRef    = storage.ref(server.storage, "member/" + doc.data().image)
+            const dowload_image = storage.getDownloadURL(storageRef)
+            .then((url) => {
+                data.push ({ id : doc.id ,name : doc.data().name, image : url })
+            })
+            
         })
+        console.log ("get all !")
     }
     function form_submit () {
-        form.id != null ? update () : save ()
+        form.id ? update () : save ()
     }
     async function save () {
         try {
@@ -31,14 +41,17 @@ export default defineStore('member', () => {
             const new_name   = Date.now() + "_" + Math.floor(Math.random() * 1001)
             const storageRef = storage.ref(server.storage, "member/" + new_name)
             storage.uploadBytes(storageRef, form.image).then((snapshot) => {
-                console.log('Uploaded a blob or file!');
+                console.log('Uploaded a blob or file!')
+                console.log(snapshot)
             })
 
             // Save Data
-            data.push ({ id : Math.random() ,name : form.name, image : new_name })
+            // data.push ({ id : Math.random() ,name : form.name, image : new_name })
+            form.image = new_name
             const docRef = await firestore.addDoc(firestore.collection(server.db, "users"), form);
             console.log("Document written with ID: ", docRef.id);
             reset ()
+            get_all ()
 
         } 
         catch (e) {
@@ -58,23 +71,32 @@ export default defineStore('member', () => {
         console.log (get_data)
     }
     function reset () {
-        form.id   = null
+
+        delete form.id
         form.name = null
         form.image= null
         document.getElementById("member_image").value = "";
         console.log ("reset")
+        
     }
-    function delete_one (id) {
-        const index = data.findIndex(element => element.id === id)
-        data.splice(index, 1)
-        console.log (index)
+    async function delete_one (id) {
+        // const index = data.findIndex(element => element.id === id)
+        // data.splice(index, 1)
+        //console.log (index)
+        await firestore.deleteDoc(firestore.doc(server.db, "users", id))
+        console.log ("deleted !")
+        get_all ()
     }
     function insert_image (image) {
         const file = image.target.files[0]
         //form.image = URL.createObjectURL(file)
         form.image = file
         console.log (file.name)
+        console.log (form.image)
     }
+    onMounted(() => {
+        get_all ()
+    })
 
     return { data, form, computed_message, form_submit, reset, delete_one, get_one, update, insert_image }
 })
